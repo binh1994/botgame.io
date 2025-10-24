@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fixed auto_generate.py
-- Avoids .format()/f-strings on content with Liquid tags
-- Uses placeholder replace() so {% ... %} and {{ ... }} are preserved
-- Writes one markdown post to _posts/
+Final fixed version for botgame.io (Netlify + Jekyll compatible)
+- Fixed: Liquid tags now render correctly
+- Includes ad and related posts
+- Google Analytics can be included via _includes/analytics.html
 """
 
 import os
 import datetime
 import random
 
-# If you want domain detection from repo folder name, keep this logic:
-SITE_DOMAIN = os.environ.get("SITE_DOMAIN", "").strip()
-if not SITE_DOMAIN:
-    SITE_DOMAIN = os.path.basename(os.getcwd())  # fallback to current folder name
+SITE_DOMAIN = os.environ.get("SITE_DOMAIN", "").strip() or os.path.basename(os.getcwd())
 
 DOMAINS = [
     'botgame.io', 'metaversebot.io', 'nftgameai.com', 'hubgaming.io',
@@ -23,123 +20,99 @@ DOMAINS = [
     'botblockchain.io'
 ]
 
-# image pools (Pexels direct + fallbacks)
 IMAGES = {
     'botgame.io': [
         "https://images.pexels.com/photos/907221/pexels-photo-907221.jpeg?auto=compress&cs=tinysrgb&w=1200&h=630&fit=crop",
-        "https://source.unsplash.com/1200x630/?esports,ai,game",
-        "https://picsum.photos/1200/630?random=772535"
+        "https://source.unsplash.com/1200x630/?esports,ai,bot",
+        "https://picsum.photos/1200/630?random=88888"
     ],
-    'metaversebot.io': [
-        "https://images.pexels.com/photos/8132695/pexels-photo-8132695.jpeg?auto=compress&cs=tinysrgb&w=1200&h=630&fit=crop",
-        "https://source.unsplash.com/1200x630/?metaverse,vr",
-        "https://picsum.photos/1200/630?random=185474"
-    ],
-    'nftgameai.com': [
-        "https://images.pexels.com/photos/8370753/pexels-photo-8370753.jpeg?auto=compress&cs=tinysrgb&w=1200&h=630&fit=crop",
-        "https://source.unsplash.com/1200x630/?nft,game",
-        "https://picsum.photos/1200/630?random=797807"
-    ],
-    # fallback generic pool for other domains
     'default': [
-        "https://images.pexels.com/photos/3945662/pexels-photo-3945662.jpeg?auto=compress&cs=tinysrgb&w=1200&h=630&fit=crop",
-        "https://source.unsplash.com/1200x630/?ai,technology",
-        "https://picsum.photos/1200/630?random=123456"
+        "https://source.unsplash.com/1200x630/?ai,gaming",
+        "https://picsum.photos/1200/630?random=12345"
     ]
 }
 
 TOPICS = [
-    "AI-driven gaming strategies for 2025",
-    "How AI analytics change esports performance",
-    "NFT game economies and automated markets",
-    "Web3 bots: automation and on-chain decisions",
-    "Reinforcement learning for real-time game AI",
-    "DeFi bots vs game econ bots: similarities"
+    "AI-powered Esports Analytics for 2025",
+    "How Automation Shapes the Future of Gaming",
+    "Reinforcement Learning in Competitive Play",
+    "Smarter Bots, Smarter Players: The AI Era",
+    "Web3 Meets Esports: Smart Gaming Economies",
+    "The Rise of AI-driven Esports Coaches"
 ]
 
+
 def pick_image(domain):
-    pool = IMAGES.get(domain, IMAGES.get('default', []))
-    if not pool:
-        pool = IMAGES['default']
+    pool = IMAGES.get(domain, IMAGES['default'])
     return random.choice(pool)
+
 
 def pick_backlinks(domain):
     others = [d for d in DOMAINS if d != domain]
     random.shuffle(others)
-    selected = others[:3]
-    return "\n".join([f"- [{d}](https://{d})" for d in selected])
+    return "\n".join([f"- [{d}](https://{d})" for d in others[:3]])
 
-def generate_md_for_domain(domain):
+
+def generate_md(domain):
     today = datetime.date.today().isoformat()
     title = random.choice(TOPICS)
     image = pick_image(domain)
-    desc = f"{title} — quick insights for practitioners."
-    backlinks_md = pick_backlinks(domain)
+    desc = f"{title} — insights from {domain}"
+    backlinks = pick_backlinks(domain)
 
-    # Template with safe placeholders (no .format on braces)
-    template = """---
+    md = f"""---
 layout: post
-title: "__TITLE__"
-date: __DATE__
-author: "Alex Reed – AI Financial Analyst"
-description: "__DESC__"
-image: "__IMAGE__"
+title: "{title}"
+date: {today}
+author: "Alex Reed – AI Esports Analyst"
+description: "{desc}"
+image: "{image}"
 ---
 
-{% raw %}
-_In today’s fast-moving AI-driven markets, traders and gamers are adapting faster than ever. Let’s break down what’s happening in 2025…_
+_In today’s fast-moving AI-driven markets, gamers and analysts are adapting faster than ever. Let’s break down what’s changing in 2025…_
 
-{% include ad.html %}
+{{% include ad.html %}}
 
-### Fast highlights
-- Model-based execution & policy learning
-- Real-time risk & anomaly detection
-- Low-latency pipelines for players & bots
+### What’s Changing Right Now?
 
-### Why it matters
-When milliseconds matter, automation is no longer optional.
+AI is accelerating decision-making, improving latency, and reshaping strategies across esports.
+
+1) **Model-driven gaming**
+   Machine learning enables smarter in-game behavior and real-time predictions.
+
+2) **Better strategy automation**
+   Adaptive algorithms now analyze patterns faster than humans can react.
+
+3) **Real-time analytics**
+   Data pipelines provide instant insights — critical for professional gamers.
 
 ---
 
 ## Related Articles (internal)
-{% for p in site.posts limit:4 %}
-  {% if p.url != page.url %}
-  - [{{ p.title }}]({{ p.url }})
-  {% endif %}
-{% endfor %}
+{{% for p in site.posts limit:4 %}}
+  {{% if p.url != page.url %}}
+  - [{{{{ p.title }}}}]({{{{ p.url }}}})
+  {{% endif %}}
+{{% endfor %}}
 
 ## Friendly Network Links
-__BACKLINKS__
-{% endraw %}
+{backlinks}
+
+{{% include analytics.html %}}
 """
 
-    # Replace placeholders (safe, no conflict with Liquid tags)
-    md = template.replace("__TITLE__", title)\
-                 .replace("__DATE__", today)\
-                 .replace("__DESC__", desc)\
-                 .replace("__IMAGE__", image)\
-                 .replace("__BACKLINKS__", backlinks_md)
-
-    # slug for filename
     slug = title.lower().replace(" ", "-").replace("/", "-")
-    filename = f"_posts/{today}-{slug}.md"
-    return filename, md
+    path = f"_posts/{today}-{slug}.md"
+    return path, md
 
-def write_post_file(path, content):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
 
 def main():
-    domain = SITE_DOMAIN or os.path.basename(os.getcwd())
-    # ensure posts dir exists
     os.makedirs("_posts", exist_ok=True)
+    fn, content = generate_md(SITE_DOMAIN)
+    with open(fn, "w", encoding="utf-8") as f:
+        f.write(content)
+    print("✅ Wrote:", fn)
 
-    fn, md = generate_md_for_domain(domain)
-    write_post_file(fn, md)
-    print("Wrote:", fn)
-    # exit success
-    return 0
 
 if __name__ == "__main__":
     main()
