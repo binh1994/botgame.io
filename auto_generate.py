@@ -34,7 +34,7 @@ def generate_md():
     today = datetime.date.today().isoformat()
     title = random.choice(TOPICS)
     image = pick_image()
-    desc = f"{title} — AI analysis from botgame.io"
+    desc = f"{title} — AI insights from botgame.io"
     backlinks = pick_backlinks()
 
     md = """---
@@ -46,18 +46,18 @@ description: "{desc}"
 image: "{image}"
 ---
 
-In today’s AI-driven gaming landscape, automation and analysis shape the competitive scene.
+In today’s AI-driven gaming world, automation and analytics define performance and strategy.
 
-{{% raw %}}{{% include ad.html %}}{{% endraw %}}
+{% include ad.html %}
 
-### Key Insights
-- AI improves team composition and reaction prediction
-- Data analytics identify play patterns
-- Adaptive bots enhance practice efficiency
+### Highlights
+- Smarter prediction models
+- Reinforcement learning for esports
+- AI-enhanced reaction analysis
 
 ---
 
-## Network Links
+## Related Network
 {backlinks}
 """.format(title=title, date=today, desc=desc, image=image, backlinks=backlinks)
 
