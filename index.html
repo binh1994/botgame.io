@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Botgame Blog</title>
+  <meta name="description" content="AI-generated articles about ai gaming, esports">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<header class="hero">
+  <h1>🤖 Botgame Blog</h1>
+  <p>AI-generated articles about ai gaming, esports</p>
+  <div class="ad-banner">{% raw %}{% include ad.html %}{% endraw %}</div>
+</header>
+
+<main>
+  <section class="posts">
+    <h2>📰 Latest AI-Generated Articles</h2>
+    {% raw %}{% for post in site.posts %}{% endraw %}
+      <article class="post-card">
+        {% raw %}{% if post.image %}{% endraw %}<img src="{{{{ post.image }}}}" alt="{{{{ post.title }}}}">{% raw %}{% endif %}{% endraw %}
+        <h3><a href="{{{{ post.url }}}}">{{{{ post.title }}}}</a></h3>
+        <p>{{{{ post.excerpt | strip_html | truncate: 180 }}}}</p>
+      </article>
+    {% raw %}{% endfor %}{% endraw %}
+  </section>
+</main>
+
+<footer>
+  <p>© 2025 botgame.io</p>
+</footer>
+
+{% raw %}{% include analytics.html %}{% endraw %}
+</body>
+</html>

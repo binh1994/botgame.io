@@ -1,0 +1,13 @@
+:root {{
+  --c1: #00F5A0;
+  --c2: #00D1FF;
+}}
+* {{ box-sizing: border-box; }}
+body {{ margin:0; font-family: Inter,system-ui,Arial; background:#0b1220; color:#e6eef8; }}
+.hero {{ padding:44px 20px; text-align:center; background: linear-gradient(90deg, var(--c1), var(--c2)); color:#fff; }}
+.hero h1 {{ margin:0 0 6px; font-size:32px; }}
+.ad-banner {{ margin-top:12px; }}
+.posts {{ max-width:960px; margin:26px auto; padding:0 14px; }}
+.post-card {{ background:#0a1a2f; border:1px solid #11213a; border-radius:14px; padding:18px; margin:18px 0; box-shadow:0 10px 30px rgba(0,0,0,.35); }}
+.post-card img {{ width:100%; border-radius:10px; margin-bottom:10px; }}
+footer {{ text-align:center; padding:24px; color:#9fb3c8; }}

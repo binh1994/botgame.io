@@ -1,0 +1,9 @@
+title: "Botgame Blog"
+description: "AI-generated articles about ai gaming, esports"
+baseurl: ""
+url: "https://botgame.io"
+theme: minima
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
