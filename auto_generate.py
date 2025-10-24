@@ -37,10 +37,10 @@ def generate_md():
     desc = f"{title} — AI analysis from botgame.io"
     backlinks = pick_backlinks()
 
-    md = f"""---
+    md = """---
 layout: post
 title: "{title}"
-date: {today}
+date: {date}
 author: "Alex Reed – AI Esports Analyst"
 description: "{desc}"
 image: "{image}"
@@ -48,7 +48,7 @@ image: "{image}"
 
 In today’s AI-driven gaming landscape, automation and analysis shape the competitive scene.
 
-{% raw %}{% include ad.html %}{% endraw %}
+{{% raw %}}{{% include ad.html %}}{{% endraw %}}
 
 ### Key Insights
 - AI improves team composition and reaction prediction
@@ -59,7 +59,7 @@ In today’s AI-driven gaming landscape, automation and analysis shape the compe
 
 ## Network Links
 {backlinks}
-"""
+""".format(title=title, date=today, desc=desc, image=image, backlinks=backlinks)
 
     slug = title.lower().replace(" ", "-").replace("/", "-")
     return f"_posts/{today}-{slug}.md", md
